@@ -30,15 +30,5 @@ public class Product extends AbstractEntity {
     public Product() {
 
     }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                '}';
-    }
 }
 

@@ -32,14 +32,4 @@ public abstract class AbstractEntity implements Serializable {
             this.updatedAt = createdAt;
         }
     }
-
-    @Override
-    public String toString() {
-        return "AbstractEntity{" +
-                "uuid=" + uuid +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", active=" + active +
-                '}';
-    }
 }
