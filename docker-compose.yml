@@ -1,0 +1,21 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'user'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+
+  db_admin:
+    image: adminer
+    container_name: db_admin
+    ports:
+      - '8050:8080'
+    depends_on:
+      - db
