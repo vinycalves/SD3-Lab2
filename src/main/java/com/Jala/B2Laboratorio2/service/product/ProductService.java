@@ -2,6 +2,7 @@ package com.Jala.B2Laboratorio2.service.product;
 
 import com.Jala.B2Laboratorio2.dto.product.ProductDto;
 import com.Jala.B2Laboratorio2.entities.product.Product;
+import com.Jala.B2Laboratorio2.exceptions.product.UUIDException;
 import com.Jala.B2Laboratorio2.repositories.product.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,35 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public Product productById(UUID productUUID) {
+        var exists = productRepository.findById(productUUID).isPresent();
+        if (!exists) {
+            throw new UUIDException(productUUID);
+        }
+        return productRepository.findById(productUUID).get();
+    }
+    
+    
+    public List<Product> productFindByName(String name) {
+        return productRepository.findAll().stream().filter(product -> product.getName().equals(name)).toList();
+    }
+
+    public List<Product> productFindByPrice(BigDecimal price) {
+        return productRepository.findAll().stream().filter(product -> product.getPrice().equals(price)).toList();
+    }
+
+    public List<Product> productFindByDescription(String description) {
+        return productRepository.findAll().stream().filter(product -> product.getDescription().equals(description)).toList();
+    }
+
+    public List<Product> productFindByQuantity(BigDecimal quantity) {
+        return productRepository.findAll().stream().filter(product -> product.getQuantity().equals(quantity)).toList();
+    }
+
     public void deleteProduct(UUID productUUID) {
         boolean exists = productRepository.existsById(productUUID);
         if (!exists) {
-            throw new IllegalStateException("Product with ID " + productUUID + " doesn't exists");
+            throw new UUIDException(productUUID);
         }
         productRepository.deleteById(productUUID);
     }
@@ -42,12 +68,12 @@ public class ProductService {
     @Transactional
     public void updateStudent(UUID productUUID, String name, String description, BigDecimal price, BigDecimal quantity) {
         var product = productRepository.findById(productUUID)
-                .orElseThrow(() -> new IllegalStateException("Product with id " + productUUID + " doesn't exists"));
+                .orElseThrow(() -> new UUIDException(productUUID));
 
-        if (!name.isBlank() && !Objects.equals(product.getName(), name)) {
+        if (name != null && !name.isBlank() && !Objects.equals(product.getName(), name)) {
             product.setName(name);
         }
-        if (!description.isBlank() && !Objects.equals(product.getDescription(), description)) {
+        if (description != null && !description.isBlank() && !Objects.equals(product.getDescription(), description)) {
             product.setDescription(description);
         }
         if (price != null && !Objects.equals(product.getPrice(), price)) {

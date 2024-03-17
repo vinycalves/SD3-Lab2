@@ -2,7 +2,6 @@ package com.Jala.B2Laboratorio2.controllers.product;
 
 import com.Jala.B2Laboratorio2.dto.product.ProductDto;
 import com.Jala.B2Laboratorio2.entities.product.Product;
-import com.Jala.B2Laboratorio2.repositories.product.ProductRepository;
 import com.Jala.B2Laboratorio2.service.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +27,32 @@ public class ProductController {
     @GetMapping
     public List<Product> getProducts() {
         return productService.productList();
+    }
+
+    @GetMapping(path = "{productID}")
+    public Product getProductById(@PathVariable("productID") UUID productID) {
+        return productService.productById(productID);
+    }
+
+    @GetMapping(path = "/name/{Name}")
+    public List<Product> getProductByName(@PathVariable("Name") String name){
+        return productService.productFindByName(name);
+    }
+
+
+    @GetMapping("/price/{price}")
+    public List<Product> getProductByPrice(@PathVariable("price") BigDecimal price) {
+        return productService.productFindByPrice(price);
+    }
+
+    @GetMapping("/description/{description}")
+    public List<Product> getProductByDescription(@PathVariable("description") String description) {
+        return productService.productFindByDescription(description);
+    }
+
+    @GetMapping("/quantity/{quantity}")
+    public List<Product> getProductByQuantity(@PathVariable("quantity") BigDecimal quantity) {
+        return productService.productFindByQuantity(quantity);
     }
 
     @DeleteMapping(path = "{productID}")

@@ -1,7 +1,6 @@
 package com.Jala.B2Laboratorio2.entities;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +16,7 @@ public abstract class AbstractEntity implements Serializable {
     @Column(name = "ID", updatable = false)
     private UUID uuid;
     @Column(name = "DT_CREATED_AT", updatable = false)
-    private Date createdAt;
+    private final Date createdAt = new Date();
     @Setter
     @Column(name = "DT_UPDATED_AT")
     private Date updatedAt;
@@ -26,10 +25,12 @@ public abstract class AbstractEntity implements Serializable {
     private boolean active = true;
 
     @PrePersist
-    public void prePersist() {
-        if (this.createdAt == null) {
-            this.createdAt = new Date();
-            this.updatedAt = createdAt;
-        }
+    private void prePersist() {
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        updatedAt = new Date();
     }
 }
