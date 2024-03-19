@@ -3,6 +3,7 @@ package com.Jala.B2Laboratorio2.controllers.product;
 import com.Jala.B2Laboratorio2.dto.product.ProductDto;
 import com.Jala.B2Laboratorio2.entities.product.Product;
 import com.Jala.B2Laboratorio2.service.product.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,9 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> postProducts(@RequestBody ProductDto productDto) {
-        var prd = productService.createNewProduct(productDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(prd);
+    public ResponseEntity<Product> postProducts(@Valid @RequestBody ProductDto productDto) {
+        Product createdProduct = productService.createNewProduct(productDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
     @GetMapping
@@ -30,10 +31,17 @@ public class ProductController {
     }
 
     @GetMapping(path = "{productID}")
-    public Product getProductById(
-            @PathVariable("productID") UUID productID,
-            @RequestParam(required = false) String name) {
+    public Product getProductById(@PathVariable("productID") UUID productID) {
         return productService.productById(productID);
+    }
+
+    @GetMapping("/search")
+    public List<Product> getProductByAttributes(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) BigDecimal price,
+            @RequestParam(required = false) BigDecimal quantity) {
+        return productService.productByAttributes(name, description, price, quantity);
     }
 
     @DeleteMapping(path = "{productID}")
@@ -42,10 +50,7 @@ public class ProductController {
     }
 
     @PutMapping(path = "{productID}")
-    public void updateProduct(
-            @PathVariable("productID") UUID productUUID,
-            @RequestBody ProductDto productDto
-    ) {
-        productService.updateStudent(productUUID, productDto);
+    public void updateProduct(@PathVariable("productID") UUID productUUID, @Valid @RequestBody ProductDto productDto) {
+        productService.updateProduct(productUUID, productDto);
     }
 }

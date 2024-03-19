@@ -19,13 +19,8 @@ public class ProductService {
     private ProductRepository productRepository;
 
     public Product createNewProduct(ProductDto productDto) {
-        var prd = Product.builder()
-                .name(productDto.name())
-                .price(productDto.price())
-                .description(productDto.description())
-                .quantity(productDto.quantity())
-                .build();
-        return productRepository.save(prd);
+        Product product = new Product(productDto.name(), productDto.description(), productDto.price(), productDto.quantity());
+        return productRepository.save(product);
     }
 
     public List<Product> productList() {
@@ -33,36 +28,36 @@ public class ProductService {
     }
 
     public Product productById(UUID productUUID) {
-        var exists = productRepository.findById(productUUID).isPresent();
-        if (!exists) {
-            throw new UUIDException(productUUID);
-        }
-        return productRepository.findById(productUUID).get();
+        return productRepository.findById(productUUID)
+                .orElseThrow(() -> new UUIDException(productUUID));
+    }
+
+    public List<Product> productByAttributes(String name, String description, BigDecimal price, BigDecimal quantity) {
+        return productRepository.findByAttributes(name, description, price, quantity);
     }
 
     public void deleteProduct(UUID productUUID) {
-        boolean exists = productRepository.existsById(productUUID);
-        if (!exists) {
+        if (!productRepository.existsById(productUUID)) {
             throw new UUIDException(productUUID);
         }
         productRepository.deleteById(productUUID);
     }
 
     @Transactional
-    public void updateStudent(UUID productUUID, ProductDto productDto) {
-        var product = productRepository.findById(productUUID)
+    public void updateProduct(UUID productUUID, ProductDto productDto) {
+        Product product = productRepository.findById(productUUID)
                 .orElseThrow(() -> new UUIDException(productUUID));
 
-        if (productDto.name() != null && !productDto.name().isBlank() && !Objects.equals(product.getName(), productDto.name())) {
+        if (!Objects.equals(product.getName(), productDto.name())) {
             product.setName(productDto.name());
         }
-        if (productDto.description() != null && !productDto.description().isBlank() && !Objects.equals(product.getDescription(), productDto.description())) {
+        if (!Objects.equals(product.getDescription(), productDto.description())) {
             product.setDescription(productDto.description());
         }
-        if (productDto.price() != null && !Objects.equals(product.getPrice(), productDto.price())) {
+        if (!Objects.equals(product.getPrice(), productDto.price())) {
             product.setPrice(productDto.price());
         }
-        if (productDto.quantity() != null && !Objects.equals(product.getQuantity(), productDto.quantity())) {
+        if (!Objects.equals(product.getQuantity(), productDto.quantity())) {
             product.setQuantity(productDto.quantity());
         }
     }
