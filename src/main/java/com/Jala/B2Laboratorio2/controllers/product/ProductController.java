@@ -30,29 +30,10 @@ public class ProductController {
     }
 
     @GetMapping(path = "{productID}")
-    public Product getProductById(@PathVariable("productID") UUID productID) {
+    public Product getProductById(
+            @PathVariable("productID") UUID productID,
+            @RequestParam(required = false) String name) {
         return productService.productById(productID);
-    }
-
-    @GetMapping(path = "/name/{Name}")
-    public List<Product> getProductByName(@PathVariable("Name") String name){
-        return productService.productFindByName(name);
-    }
-
-
-    @GetMapping("/price/{price}")
-    public List<Product> getProductByPrice(@PathVariable("price") BigDecimal price) {
-        return productService.productFindByPrice(price);
-    }
-
-    @GetMapping("/description/{description}")
-    public List<Product> getProductByDescription(@PathVariable("description") String description) {
-        return productService.productFindByDescription(description);
-    }
-
-    @GetMapping("/quantity/{quantity}")
-    public List<Product> getProductByQuantity(@PathVariable("quantity") BigDecimal quantity) {
-        return productService.productFindByQuantity(quantity);
     }
 
     @DeleteMapping(path = "{productID}")
@@ -63,11 +44,8 @@ public class ProductController {
     @PutMapping(path = "{productID}")
     public void updateProduct(
             @PathVariable("productID") UUID productUUID,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) BigDecimal price,
-            @RequestParam(required = false) BigDecimal quantity
-    ){
-        productService.updateStudent(productUUID, name, description, price, quantity);
+            @RequestBody ProductDto productDto
+    ) {
+        productService.updateStudent(productUUID, productDto);
     }
 }

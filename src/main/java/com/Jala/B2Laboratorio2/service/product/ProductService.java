@@ -39,23 +39,6 @@ public class ProductService {
         }
         return productRepository.findById(productUUID).get();
     }
-    
-    
-    public List<Product> productFindByName(String name) {
-        return productRepository.findAll().stream().filter(product -> product.getName().equals(name)).toList();
-    }
-
-    public List<Product> productFindByPrice(BigDecimal price) {
-        return productRepository.findAll().stream().filter(product -> product.getPrice().equals(price)).toList();
-    }
-
-    public List<Product> productFindByDescription(String description) {
-        return productRepository.findAll().stream().filter(product -> product.getDescription().equals(description)).toList();
-    }
-
-    public List<Product> productFindByQuantity(BigDecimal quantity) {
-        return productRepository.findAll().stream().filter(product -> product.getQuantity().equals(quantity)).toList();
-    }
 
     public void deleteProduct(UUID productUUID) {
         boolean exists = productRepository.existsById(productUUID);
@@ -66,21 +49,21 @@ public class ProductService {
     }
 
     @Transactional
-    public void updateStudent(UUID productUUID, String name, String description, BigDecimal price, BigDecimal quantity) {
+    public void updateStudent(UUID productUUID, ProductDto productDto) {
         var product = productRepository.findById(productUUID)
                 .orElseThrow(() -> new UUIDException(productUUID));
 
-        if (name != null && !name.isBlank() && !Objects.equals(product.getName(), name)) {
-            product.setName(name);
+        if (productDto.name() != null && !productDto.name().isBlank() && !Objects.equals(product.getName(), productDto.name())) {
+            product.setName(productDto.name());
         }
-        if (description != null && !description.isBlank() && !Objects.equals(product.getDescription(), description)) {
-            product.setDescription(description);
+        if (productDto.description() != null && !productDto.description().isBlank() && !Objects.equals(product.getDescription(), productDto.description())) {
+            product.setDescription(productDto.description());
         }
-        if (price != null && !Objects.equals(product.getPrice(), price)) {
-            product.setPrice(price);
+        if (productDto.price() != null && !Objects.equals(product.getPrice(), productDto.price())) {
+            product.setPrice(productDto.price());
         }
-        if (quantity != null && !Objects.equals(product.getQuantity(), quantity)) {
-            product.setQuantity(quantity);
+        if (productDto.quantity() != null && !Objects.equals(product.getQuantity(), productDto.quantity())) {
+            product.setQuantity(productDto.quantity());
         }
     }
 }
